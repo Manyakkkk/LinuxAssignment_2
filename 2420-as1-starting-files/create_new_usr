@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Check if the script is run as root
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root"
+  exit 1
+fi
+
+# Function to show usage
+usage() {
+  echo "Usage: $0 -u username -s shell -h home_directory [-g additional_groups]"
+  echo "  -u   Specify the username for the new user"
+    echo "  -s   Specify the shell for the new user (e.g., /bin/bash)"
+    echo "  -g   Specify additional groups (comma-separated, no spaces)"
+}
+
+# Parse command-line options
+while getopts ":u:s:h:g:" opt; do
+  case ${opt} in
+    u)
+      username=${OPTARG} # will set the username
+      ;;
+    s)
+      shell=${OPTARG} # will set the specified shell
+      ;;
+    h)
+      home_directory=${OPTARG} 
+      ;;
+    g)
+      groups=${OPTARG} # will set the aditional groups
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" 
+      usage
+      ;;
+      esac
+done
+
+# Ensure required username and home directory options are provided
+if [ -z "$username" ] || [ -z "$home_directory" ]; then
+  echo "Error"
+  usage
+fi
+
+# Setting the default shell if not provided
+if [[ -z "$shell" ]]; then
+    shell="/bin/bash"
+    echo "Shell not specified. Using default shell: $shell"
+fi
+
+# Create the user with the specified shell and home directory
+useradd -m -d "$home_directory" -s "$shell" "$username"
+
+# Check if user was created successfully
+if [ $? -ne 0 ]; then
+  echo "Failed to create user $username"
+  exit 1
+fi
+
+# Copy the contents of /etc/skel to the new user's home directory
+cp -r /etc/skel/. "$home_directory"
+
+# Add user to additional groups if specified
+if [ ! -z "$groups" ]; then
+  usermod -aG "$groups" "$username"
+fi
+
+# Set ownership of the home directory
+chown -R "$username":"$username" "$home_directory"
+
+# Set the password for the new user
+echo "Set the password for the new user:"
+passwd "$username"
+
+#Confirmation message
+echo "User $username created successfully with home directory $home_directory and shell $shell."
+

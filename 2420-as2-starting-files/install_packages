@@ -1,0 +1,35 @@
+#!/bin/bash
+# This script installs packages listed in packages_list.txt check_root         
+
+#To check if the scrript is running as root
+check_root() {
+	if [[ $EUID -ne 0 ]]; then
+		echo "This script must run as root"
+		exit 1
+	fi
+}
+
+# Function to verify that packages_list.txt exists
+check_package_list() {
+    if [[ ! -f list_packages.txt ]]; then # checking the file
+        echo "Error: list_packages.txt not found!"
+        exit 1
+    fi
+}
+
+# Function to install packages from packages_list.txt
+install_packages() {
+    # Read each package from the list and stores it in the variable assigned i.e. package
+    while IFS= read -r package; do
+        if [[ -n "$package" ]]; then  # Ensure that the variable package is not empty
+            echo "Installing $package..."
+            pacman -S --noconfirm "$package" || echo "Failed to install $package" # Install the package and says yes to to prompts automatically
+        fi
+    done < list_packages.txt # to redirect the .txt file to read each line from the file
+}
+
+# Call functions in the necessary order
+check_root          # Check for root permissions
+check_package_list  # Verify list_packages.txt exists
+install_packages    # Install each package list
+

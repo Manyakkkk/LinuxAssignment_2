@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# To store the path of the directory where the script is currently being run
+SOURCE_DIR=$(pwd)  # assuming the script is run from the directory containing the files
+
+# Create symbolic links for the binary directories
+ln -sf "$SOURCE_DIR/bin/sayhi" ~/bin/sayhi
+ln -sf "$SOURCE_DIR/bin/install-fonts" ~/bin/install-fonts
+
+# Create a directory to ensure that the command doesnt fail if the directory already exists
+mkdir -p ~/.config
+
+# Create symbolic links for the configuration directories
+ln -sf "$SOURCE_DIR/config/kak" ~/.config/kak
+ln -sf "$SOURCE_DIR/config/tmux" ~/.config/tmux
+
+# Link the bashrc file and create it in the home directory
+ln -sf "$SOURCE_DIR/home/bashrc" ~/.bashrc
+
+# Confirm the creation of links
+echo "Symbolic links created successfully."
+
