@@ -1,27 +1,29 @@
 # SHELL SCRIPTING 
 ---
 
-## Overview ##
+## Overview 
 
-Q- What is shell scripting?
+**Q**- What is shell scripting?
 
-It is a practice of write small commands in a command-lin interpreter that allows communication with the OS (shell) to automate tasks.
+**Answer** - It is a practice of write small commands in a command-lin interpreter that allows communication with the OS (shell) to automate tasks.
 ---
 
 This assignment includes two project that focuses on automatyed system setup and user creation using Bash shell scripts. The scripts created in individual projects will help streamline administrative tasks, making it easier to manage configuration files and users on a new system.
 
-### The projects are:
+### THE PROJECTS ARE:
 
-### PROJECT 1- System Setup
+### Project 1 - System Setup
+
 
 Includes installation of packages and symbolic linking of respective configuration files.
 
-### PROJECT 2- New User
+### Project 2 - New User
+
 
 Includes creation of a new user with customized home directory, shell setting and group access permissions.
 ---
 
-## PROJECT 1: System Setup Script #
+## PROJECT 1: System Setup Script 
 
 We will start by creating a script that includes user-defined list of packages that is to be installed which are ***kakoune*** and ***tmux***.
 
@@ -47,6 +49,8 @@ done
 
 ``` generate_package_list ```
 
+---
+
 ### Script 2 - *install_packages* 
 
 This script willl install the packages listed in the .txt file
@@ -66,7 +70,7 @@ check_root() {
 
 ```
 
-- `$EUID` : this will store the user ID of. The root user has an ID of 0 so if this command is not equal to zero, it will display the `echo` message and will exit (indicating an error)
+- `$EUID` : this will store the user ID of. The root user has an ID of **0** so if this command is not equal to zero, it will display the `echo` message and will exit (indicating an error)
 
 2. Next we will create a function to check if our .txt file exists. This will be done by using an if statement.
 
@@ -115,11 +119,13 @@ check_root()
 
 ```
 
+---
+
 ### Script 3 - *symbolic_links* 
 
-Q - What are symbolic links? 
+**Q** - What are symbolic links? 
 
-Answer - These are shortcuts that makes it easier to reach a file/folder from different locations on your computer.
+**Answer** - These are shortcuts that makes it easier to reach a file/folder from different locations on your computer.
 
 In this script we will create symbolic links.
 
@@ -185,6 +191,8 @@ ln -sf "$SOURCE_DIR/config/kak" ~/.config/kak
 
 5. End the script by dispslaying a confirmation message saying to let user know that all the steps have done successfully and were no errors.
 
+---
+
 ### Script - 4: *call_scripts* 
 
 This script is designed to handle two main tasks: installing packages and creating symbolic links, based on user-provided options. It uses command-line flags to determine which task(s) to perform
@@ -243,6 +251,91 @@ fi
 
 ```
 
-#Project 2 - Creating new user#
+# PROJECT 2 - Creating new user
 
+1. We will check if the user is runnig as root.
+
+2. We will define a function that will print correct usage of the script. 
+
+```
+
+usage() {
+  echo "Usage: $0 -u username -s shell -h home_directory [-g additional_groups]"
+  echo "  -u   Specify the username for the new user"
+  echo "  -s   Specify the shell for the new user (e.g., /bin/bash)"
+  echo "  -h   Specify the home directory for the new user"
+  echo "  -g   Specify additional groups (comma-separated, no spaces)"
+}
+
+```
+
+
+- `$0`: This variable holds the name of the script.
+
+3. We will use `getopts` - a built-in command to parse command-line options.
+
+A small code below explains how to do it:
+
+```
+
+while getopts ":u:s:h:g:" opt; do
+   case ${opt} in 
+     g)
+      groups=${OPTARG} # will set the additional groups
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" 
+      usage
+      ;;
+  esac
+done
+
+```
+
+- `\?)`: Handles invalid options and calls the `usage` function.
+
+4. Then we will make sure that `username` and `home_directory` variable is not empty because we need a name to create a new user. So if it is empty, we will throw an ERROR.
+
+5. We also have to make sure that our shell is not empty too. So if the user has not provided with anything the script assigns a default value i.e. (/bin/bash) and will inform the user that the default value shell is being used.
+
+6. After confirming the above conditions we will now create the user with the specified shell and home directory
+
+```
+useradd -m -d "$home_directory" -s "$shell" "$username"
+useradd: A command used to create a new user.
+
+```
+
+- `-m`: Creates the home directory if it does not exist.
+
+- `-d "$home_directory"`: Specifies the path to the home directory.
+
+- `-s "$shell"`: Specifies the user's login shell.
+
+```
+
+7. Make sure you tell the user if the user was created successfullly.
+
+
+8. Copy the contents of /etc/skel to the new user's home directory by using `cp` command
+
+9. Then by the use of `-aG` command we will add the user to any additional groups if specified
+
+```
+ usermod -aG "$groups" "$username"
+
+```
+-a: Appends the user to the supplementary groups.
+
+-G "$groups": Specifies the supplementary groups.
+
+10. Setting the ownership of the home directory comes next.
+
+``` chown -R "$username":"$username" "$home_directory" ```
+
+11. Now we will allow user to set the password of using the `passwd` command and print them a confirmation message indicating the user was created successfully.
+
+## CONCLUSION
+
+Using both the **System Setup Script** and the **User Creation Script** makes it easier and faster to manage important tasks on a new system. The System Setup Scripts help by automatically installing the software we need and setting up configuration files, saving time and keeping things organized. The User Creation Script takes care of setting up new users by giving them the right permissions, groups, and a customized environment.
 
