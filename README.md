@@ -21,7 +21,7 @@ Includes installation of packages and symbolic linking of respective configurati
 Includes creation of a new user with customized home directory, shell setting and group access permissions.
 ---
 
-<!!!!IMAGE!!!!>
+<IMAGE>
 
 ## PROJECT 1: System Setup Script
 
