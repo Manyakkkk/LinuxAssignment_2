@@ -21,7 +21,7 @@ Includes installation of packages and symbolic linking of respective configurati
 Includes creation of a new user with customized home directory, shell setting and group access permissions.
 ---
 
-## PROJECT 1: System Setup Script ##
+# PROJECT 1: System Setup Script #
 
 We will start by creating a script that includes user-defined list of packages that is to be installed which are ***kakoune*** and ***tmux***.
 
@@ -212,9 +212,6 @@ fi
 
 ```
 
-
-
-
-
+#Project 2 - Creating new user#
 
 
