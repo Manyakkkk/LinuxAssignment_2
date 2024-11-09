@@ -1,14 +1,31 @@
 #!/bin/bash
 
 # To store the path of the directory where the script is currently being run
-SOURCE_DIR=$(pwd)  # assuming the script is run from the directory containing the files
+SOURCE_DIR=$(pwd) # assuming the script is run from the directory containing the files
+DEST_LNK=$1 # takes symbolic link as second argument
+
+# Function to create symbolic links and check if path exist
+create_symlink() {
+
+  if [[ -e "$SOURCE_DIR" ]]; then # checks if a path exist or not, if yes, return true
+	
+    if ln -sf "$SOUCE_DIR" "$DEST_LINK"; then # this will create the symbolic link to our source file
+      echo "Successfully created symlink: $DEST_LNK -> $SOURCE_DIR"
+    else
+      echo "Error: Failed to create symlink for $SOURCE_DIR"
+    fi
+  else
+    echo "Error: Source $SOURCE_DIR does not exist."
+  fi
+}
+
+#Create a directory to ensure that the command doesnt fail if the directory already exists
+mkdir -p ~/.config
 
 # Create symbolic links for the binary directories
 ln -sf "$SOURCE_DIR/bin/sayhi" ~/bin/sayhi
 ln -sf "$SOURCE_DIR/bin/install-fonts" ~/bin/install-fonts
 
-# Create a directory to ensure that the command doesnt fail if the directory already exists
-mkdir -p ~/.config
 
 # Create symbolic links for the configuration directories
 ln -sf "$SOURCE_DIR/config/kak" ~/.config/kak
@@ -19,4 +36,8 @@ ln -sf "$SOURCE_DIR/home/bashrc" ~/.bashrc
 
 # Confirm the creation of links
 echo "Symbolic links created successfully."
+
+#Ref - https://www.linode.com/docs/guides/linux-symlinks/ | How to Create Linux Symlinks
+#Ref - https://www.freecodecamp.org/news/linux-ln-how-to-create-a-symbolic-link-in-linux-example-bash-command/
+
 

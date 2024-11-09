@@ -1,17 +1,80 @@
 #!/bin/bash
 
+# Check if the script is run as root 
+
+if [[ $EUID -ne 0 ]]; then
+  echo "Error: Run the file as root."
+  exit 1
+# Error handle: Return a non-zero exit code when error happened
+fi
+
+# Initiate variables to identify user option
+generate_list_package=false
+install_package=false
+symbolic_link=false
+
+while getopts "gil" opt; do
+# 'il': possible options, no need to pass in arguments
+  case $opt in
+    g)
+    #When user pass in '-g' option, change generate_list_package to True
+      generate_list_package=true
+      ;;
+    i)
+    # When user pass in '-i' option, change install_packages to True
+      install_package=true
+      ;;
+
+    l)
+    # When user pass in '-l' option, change install_opt to True
+      symbolic_link=true
+      ;;
+    *)
+    # When other arguments occur, display the user_guide function again showing the syntax
+      user_guide
+      ;;
+  esac
+done
+
+
 # Run the script containing list of packages 
-echo "Generating package list..."
-./generate_list_packages # this will run this script from the current directory
+if $generate_list_package; then
+	echo "Generating package list...."
+	if ./generate_list_packages; then
+		echo "Generated the list successfully"
+	else
+		echo "ERROR: could not generate list"
+	fi
+fi
+
 
 # Run the script with the installing details
-echo "Running package installation..."
-./install_packages # this will read the content from the packages.txt file and then install the listed packages
+if $install_package; then
+	echo "Running package installation..."
+	if ./install_packages; then
+		echo "Packages installed successfully"
+	else
+		echo "ERROR: could not install the packages"
+
+	fi
+fi
+
 
 # Run the symbolic links creation script
-echo "Creating symbolic links for configuration files..."
-./symbolic_links # will create the symbolic link from the config files in our repository to correct location
+if  $symbolic_link; then
+	echo "Creating symbolic links..."
+	if ./symbolic_link; then
+		echo "Symbolic link created successfully"
+	else
+		echo "ERROR: could not create symbolic link for config files"
+	fi
+fi
 
-# Confirmation message
-echo "System setup complete."
+# If neither option is given by user, show user_guide to display syntax
+if ! $generate_list_package && ! $install_packages && ! $create_links; then
+  user_guide
+else
+	echo "System setup complete" #Confirmation message
+fi
+
 

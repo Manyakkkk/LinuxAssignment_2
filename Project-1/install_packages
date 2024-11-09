@@ -6,14 +6,18 @@ check_root() {
 	if [[ $EUID -ne 0 ]]; then
 		echo "This script must run as root"
 		exit 1
+	#Error Handle: returns a non-zero exit code when error happened
 	fi
 }
+
+# Ref: man bash, /EUID section
 
 # Function to verify that packages_list.txt exists
 check_package_list() {
     if [[ ! -f list_packages.txt ]]; then # checking the file
         echo "Error: list_packages.txt not found!"
-        exit 1
+        exit 1,
+	#Error Handle: returns a non-zero exit code if no such file found
     fi
 }
 
@@ -24,9 +28,13 @@ install_packages() {
         if [[ -n "$package" ]]; then  # Ensure that the variable package is not empty
             echo "Installing $package..."
             pacman -S --noconfirm "$package" || echo "Failed to install $package" # Install the package and says yes to to prompts automatically
+	# Error Handle: if package failed to install will throw an error
         fi
     done < list_packages.txt # to redirect the .txt file to read each line from the file
 }
+
+# Ref: https://unix.stackexchange.com/questions/26784/understanding-ifs
+# Ref: https://man.archlinux.org/man/pacman.8.en
 
 # Call functions in the necessary order
 check_root          # Check for root permissions
