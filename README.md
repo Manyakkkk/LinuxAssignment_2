@@ -5,6 +5,7 @@
 
 **Q**- What is shell scripting?
 
+
 **Answer** - It is a practice of write small commands in a command-lin interpreter that allows communication with the OS (shell) to automate tasks.
 ---
 
@@ -15,15 +16,18 @@ This assignment includes two project that focuses on automatyed system setup and
 ### Project 1 - System Setup
 
 
+
 Includes installation of packages and symbolic linking of respective configuration files.
 
 ### Project 2 - New User
 
 
 Includes creation of a new user with customized home directory, shell setting and group access permissions.
+
+
 ---
 
-## PROJECT 1: System Setup Script 
+# Project 1: System Setup Script 
 
 We will start by creating a script that includes user-defined list of packages that is to be installed which are ***kakoune*** and ***tmux***.
 
@@ -251,7 +255,7 @@ fi
 
 ```
 
-# PROJECT 2 - Creating new user
+# Project 2 - Creating new user
 
 1. We will check if the user is runnig as root.
 
@@ -312,7 +316,6 @@ useradd: A command used to create a new user.
 
 - `-s "$shell"`: Specifies the user's login shell.
 
-```
 
 7. Make sure you tell the user if the user was created successfullly.
 
@@ -321,17 +324,22 @@ useradd: A command used to create a new user.
 
 9. Then by the use of `-aG` command we will add the user to any additional groups if specified
 
+
 ```
  usermod -aG "$groups" "$username"
 
 ```
--a: Appends the user to the supplementary groups.
 
--G "$groups": Specifies the supplementary groups.
+- -a: Appends the user to the supplementary groups.
+
+- -G "$groups": Specifies the supplementary groups.
 
 10. Setting the ownership of the home directory comes next.
 
-``` chown -R "$username":"$username" "$home_directory" ```
+``` 
+chown -R "$username":"$username" "$home_directory" 
+
+```
 
 11. Now we will allow user to set the password of using the `passwd` command and print them a confirmation message indicating the user was created successfully.
 
